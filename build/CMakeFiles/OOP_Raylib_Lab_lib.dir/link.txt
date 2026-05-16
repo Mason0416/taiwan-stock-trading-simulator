@@ -1,0 +1,2 @@
+/usr/bin/ar qc libOOP_Raylib_Lab_lib.a CMakeFiles/OOP_Raylib_Lab_lib.dir/src/Account.cpp.o CMakeFiles/OOP_Raylib_Lab_lib.dir/src/Button.cpp.o CMakeFiles/OOP_Raylib_Lab_lib.dir/src/GUI.cpp.o CMakeFiles/OOP_Raylib_Lab_lib.dir/src/StockDropdown.cpp.o CMakeFiles/OOP_Raylib_Lab_lib.dir/src/TradingSystem.cpp.o
+/usr/bin/ranlib libOOP_Raylib_Lab_lib.a

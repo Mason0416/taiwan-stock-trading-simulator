@@ -1,17 +1,10 @@
-#include "raylib.h"
-#include <iostream>
+#include "TradingSystem.h"
+
 int main() {
 
-    InitWindow(800, 450, "Raylib OOP");
-    SetTargetFPS(60);
+    TradingSystem app;
 
+    app.Run();
 
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        EndDrawing();
-    }
-
-    CloseWindow();
     return 0;
 }

@@ -59,7 +59,6 @@ cmake -S . -B build
 cmake --build build
 ```
 
-
 ## Notes
 
 - `src/` 放主要 C++ 程式碼。

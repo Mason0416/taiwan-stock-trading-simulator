@@ -5,20 +5,24 @@
 
 #include "StockData.h"
 #include "Account.h"
+#include "StockDropdown.h"
 #include "GUI.h"
+#include "NewsEvent.h"
 
 #include <random>
 #include <string>
+#include <vector>
 
 enum class TradeMode {
     WholeShare,
-    FractionalShare
+    OddLotShare
 };
 
 enum class Page {
     Main,
     Account,
-    History
+    History,
+    NewsHistory
 };
 
 class TradingSystem {
@@ -31,15 +35,22 @@ public:
 
 private:
 
-    static constexpr int screenWidth = 1400;
-    static constexpr int screenHeight = 900;
+    static constexpr int screenWidth = 1600;
+    static constexpr int screenHeight = 1000;
+    static constexpr int minScreenWidth = 1200;
+    static constexpr int minScreenHeight = 800;
     static constexpr double SHARES_PER_LOT = 1000.0;
 
     // =========================
     // Data
     // =========================
 
-    StockData stock;
+    std::vector<StockData> stocks;
+    int selectedStock = 0;
+    std::vector<MarketNews> activeNews;
+    std::vector<std::pair<int, MarketNews>> newsHistory;
+    double marketIndex = 1000.0;
+    double marketOpenIndex = 1000.0;
 
     Account account;
 
@@ -53,14 +64,14 @@ private:
 
     double orderQuantity = 1.0;
 
-    std::string quantityInput = "1.00";
+    std::string quantityInput = "1";
 
     bool editingQuantity = false;
 
     Rectangle quantityInputBox = {
-        1125.0f,
-        525.0f,
-        150.0f,
+        1290.0f,
+        600.0f,
+        160.0f,
         42.0f
     };
 
@@ -80,6 +91,10 @@ private:
 
     float priceAccumulator = 0.0f;
 
+    int windowedWidth = screenWidth;
+
+    int windowedHeight = screenHeight;
+
     // =========================
     // Random
     // =========================
@@ -93,43 +108,43 @@ private:
     Rectangle header = {
         0.0f,
         0.0f,
-        1400.0f,
-        95.0f
+        1600.0f,
+        96.0f
     };
 
     Rectangle marketRow = {
         0.0f,
-        95.0f,
-        1400.0f,
-        75.0f
+        96.0f,
+        1600.0f,
+        82.0f
     };
 
     Rectangle leftPanel = {
         40.0f,
-        190.0f,
-        260.0f,
-        570.0f
+        200.0f,
+        280.0f,
+        680.0f
     };
 
     Rectangle chartPanel = {
-        320.0f,
-        190.0f,
-        700.0f,
-        570.0f
+        340.0f,
+        200.0f,
+        850.0f,
+        680.0f
     };
 
     Rectangle rightPanel = {
-        1040.0f,
-        190.0f,
-        320.0f,
-        570.0f
+        1210.0f,
+        200.0f,
+        350.0f,
+        680.0f
     };
 
     Rectangle bottomPanel = {
         40.0f,
-        785.0f,
-        1320.0f,
-        75.0f
+        900.0f,
+        1520.0f,
+        70.0f
     };
 
     // =========================
@@ -147,7 +162,7 @@ private:
     Button sellButton;
 
     Button nextDayButton;
-
+    Button newsButton;
     Button minusButton;
 
     Button plusButton;
@@ -162,11 +177,21 @@ private:
     // Setup
     // =========================
 
-    void InitStock();
+    void InitStocks();
 
     void SetupUI();
 
-    void SeedInitialHistory();
+    void UpdateLayout();
+
+    void ToggleFullscreenMode();
+
+    void SeedInitialHistory(StockData& stock);
+
+    StockData& CurrentStock();
+    const StockData& CurrentStock() const;
+
+    void GenerateNews();
+    double GetPortfolioValue() const;
 
     // =========================
     // Update
@@ -179,6 +204,8 @@ private:
     void UpdateAccount(float dt);
 
     void UpdateHistory(float dt);
+
+    void UpdateNewsHistory(float dt);
 
     void ApplyQuantityInput();
 
@@ -195,6 +222,13 @@ private:
     void PickTrendForNewDay();
 
     void NextDay();
+
+    void UpdateMarketIndex();
+    double GetMarketNewsIndexDrift() const;
+
+    double GetTrendDriftPercent(TrendType trend);
+    double GetRandomNoisePercent(const StockData& stock);
+    double GetNewsAdjustmentPercent(const StockData& stock);
 
     // =========================
     // Trading
@@ -235,7 +269,13 @@ private:
 
     void DrawChartPanel();
 
+    void DrawNewsPanel(Rectangle area);
+
+    void DrawIndustryPerformancePanel(Rectangle area);
+
     void DrawTradingPanel();
+
+    void DrawNewsHistory();
 
     void DrawBottomSummary();
 
@@ -245,13 +285,16 @@ private:
         const std::string& label,
         const std::string& value,
         float y,
-        Color color = Theme::TEXT
+        bool numberValue = false,
+        Color color = Theme::TEXT,
+        bool compact = false
     );
 
     void DrawLabelValue(
         const std::string& label,
         const std::string& value,
         Vector2 pos,
+        bool numberValue = true,
         Color valueColor = Theme::TEXT
     );
 
@@ -262,6 +305,25 @@ private:
     // =========================
 
     double TotalAsset() const;
+
+    double GetMarketIndex() const;
+    double GetMarketIndexChangePercent() const;
+
+    std::vector<std::pair<std::string, double>> GetTopGainers(int count = 3) const;
+    std::vector<std::pair<std::string, double>> GetTopLosers(int count = 3) const;
+    std::vector<std::pair<std::string, double>> GetIndustryPerformance() const;
+
+    double RandomDouble(double low, double high);
+    double RandomNormal();
+
+    double GetNewsInfluenceForStock(const StockData& stock) const;
+    double GetTrendBiasDirection(const StockData& stock) const;
+
+    double GetLimitUpPrice(const StockData& stock) const;
+    double GetLimitDownPrice(const StockData& stock) const;
+    LimitStatus GetLimitStatus(const StockData& stock) const;
+    std::string GetLimitStatusName(const StockData& stock) const;
+    Color GetLimitStatusColor(const StockData& stock) const;
 
     double GetOrderShares() const;
 

@@ -1,156 +1,74 @@
-# Stock Trading Simulator
+# Taiwan Stock Trading Simulator
 
-A stock trading simulator built with C++ and Raylib.
+這是一個使用 C++、Raylib 和 CMake 製作的台股交易模擬器。專案透過物件導向設計，把股票資料、帳戶、交易系統、新聞事件和圖形介面拆成不同類別，模擬即時股價變化、買賣交易、投資組合與交易紀錄。
 
-This project simulates a simplified stock market trading system with a modern TradingView-inspired interface. Users can buy and sell stocks, track portfolio performance, and view simulated market price movements in real time.
+詳細的專案說明可以參考 [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md)。
 
----
+## Project Features
 
-# Features
+- 即時模擬股票價格變化
+- 多支股票與不同產業分類
+- 買進、賣出與持股管理
+- 現金、資產與交易紀錄追蹤
+- 市場新聞事件影響股價走勢
+- 台股漲跌停與紅漲綠跌顯示邏輯
+- Raylib 圖形化操作介面
+- 使用 CMake 管理建置流程
 
-- Real-time simulated stock price updates
-- Bullish / Neutral / Bearish market trends
-- Buy and sell system
-- Whole share and fractional share trading
-- Portfolio tracking
-- Trade history page
-- Dynamic price chart
-- Account overview system
-- TradingView-style UI
-- Built with Raylib
-
----
-
-# Project Structure
+## Project Structure
 
 ```text
-main.cpp
-TradingSystem.h
-TradingSystem.cpp
-
-GUI.h
-GUI.cpp
-
-Button.h
-Button.cpp
-
-StockDropdown.h
-StockDropdown.cpp
-
-StockData.h
-Account.h
+.
+├── CMakeLists.txt
+├── PROJECT_DOCUMENTATION.md
+├── README.md
+├── include/
+│   ├── Account.h
+│   ├── Button.h
+│   ├── GUI.h
+│   ├── NewsEvent.h
+│   ├── StockData.h
+│   ├── StockDropdown.h
+│   └── TradingSystem.h
+├── resources/
+│   └── fonts/
+└── src/
+    ├── Account.cpp
+    ├── Button.cpp
+    ├── GUI.cpp
+    ├── StockDropdown.cpp
+    ├── TradingSystem.cpp
+    └── main.cpp
 ```
 
----
+## Build And Run
 
-# Classes
+在專案根目錄執行：
 
-## TradingSystem
+```bash
+cmake -S . -B build
+cmake --build build
+./build/OOP_Raylib_Lab
+```
 
-Main controller of the application.
+如果重新編譯後遇到奇怪錯誤，可以先刪除 `build` 資料夾再重新建置：
 
-Handles:
+```bash
+rm -rf build
+cmake -S . -B build
+cmake --build build
+```
 
-- Game loop
-- Market simulation
-- Time system
-- Trading logic
-- Rendering
-- UI updates
 
-## StockData
+## Notes
 
-Stores stock-related information.
+- `src/` 放主要 C++ 程式碼。
+- `include/` 放標頭檔。
+- `resources/` 放字型或其他資源。
+- `PROJECT_DOCUMENTATION.md` 放完整專案說明。
+- `build/` 是 CMake 編譯產生的資料夾，通常不需要手動修改，也不建議上傳。
 
-Includes:
-
-- stock price
-- open price
-- high / low
-- volume
-- volatility
-- price history
-- market trend
-
-## Account
-
-Stores player account data.
-
-Includes:
-
-- cash
-- owned shares
-- total assets
-- trade history
-
-## Button
-
-Reusable UI button component.
-
-Supports:
-
-- hover effects
-- active state
-- click detection
-
-## StockDropdown
-
-Simple stock selection dropdown UI.
-
----
-
-# Trading Logic
-
-The stock price uses:
-
-- random noise
-- trend drift
-- volatility simulation
-
-Three market trends:
-
-- Bullish
-- Neutral
-- Bearish
-
-Each trading day randomly selects a market trend.
-
----
-
-# Controls
-
-| Action | Control |
-|---|---|
-| Buy Stock | Buy Button |
-| Sell Stock | Sell Button |
-| Next Day | Next Day Button |
-| Change Order Size | + / - Buttons |
-| Account Page | Avatar Button |
-| Trade History | History Button |
-
----
-
-# Technologies Used
-
-- C++
-- Raylib
-- Object-Oriented Programming (OOP)
-
----
-
-# Future Improvements
-
-- Multiple stocks
-- Candlestick charts
-- News event system
-- Technical indicators
-- Saving/loading accounts
-- Better market simulation
-- Multiplayer trading competition
-
----
-
-# Author
+## Author
 
 Yu-Hao Wei  
 National Chengchi University  

@@ -51,8 +51,10 @@ void Button::Draw() const {
         active ? Theme::ACCENT_BLUE_HOVER : Theme::BORDER
     );
 
-    float size = 18.0f;
-    float w = TextWidth(label, size);
+    float ui = GetUIScale();
+    float size = std::min(22.0f, 19.0f * ui);
+    size = std::min(size, bounds.height - 12.0f);
+    float w = MeasureTextEx(gUIFont, label.c_str(), size, 0.0f).x;
 
     Vector2 pos = {
         bounds.x + (bounds.width - w) * 0.5f,

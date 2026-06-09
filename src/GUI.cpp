@@ -6,50 +6,75 @@
 
 #include <sstream>
 
-Font gFont;
+Font gUIFont;
+Font gNumberFont;
 
-bool gCustomFontLoaded = false;
-
-Font LoadFontSafe(const char* path) {
-
-    if (FileExists(path)) {
-
-        Font loaded = LoadFont(path);
-
-        if (loaded.texture.id != 0) {
-
-            gCustomFontLoaded = true;
-
-            return loaded;
-
-        }
-
-    }
-
-    gCustomFontLoaded = false;
-
-    return GetFontDefault();
-
-}
+bool gUIFontLoaded = false;
+bool gNumberFontLoaded = false;
 
 void SetupFont() {
+    const char* path = "../resources/fonts/SFPRODISPLAYREGULAR.OTF";
 
-    gFont = LoadFontSafe(
+    if (FileExists(path)) {
+        TraceLog(LOG_INFO, "Font file found: %s", path);
+    } else {
+        TraceLog(LOG_WARNING, "Font file NOT found at expected path: %s", path);
+    }
 
-        "resources/fonts/SFPRODISPLAYREGULAR.OTF"
+    // Try to load UI font
+    if (FileExists(path)) {
+        Font loaded = LoadFontEx(path, 48, nullptr, 0);
+        if (loaded.texture.id != 0) {
+            SetTextureFilter(loaded.texture, TEXTURE_FILTER_BILINEAR);
+            gUIFont = loaded;
+            gUIFontLoaded = true;
+            TraceLog(LOG_INFO, "Loaded custom UI font '%s' (texture id=%d)", path, loaded.texture.id);
+        } else {
+            gUIFont = GetFontDefault();
+            gUIFontLoaded = false;
+            TraceLog(LOG_WARNING, "Failed to load UI font texture from '%s' - using default font", path);
+        }
+    } else {
+        gUIFont = GetFontDefault();
+        gUIFontLoaded = false;
+        TraceLog(LOG_WARNING, "UI font file missing; using default font");
+    }
 
-    );
-
+    // Try to load numeric/font for numbers (same file but keep separate handle)
+    if (FileExists(path)) {
+        Font loadedNum = LoadFontEx(path, 48, nullptr, 0);
+        if (loadedNum.texture.id != 0) {
+            SetTextureFilter(loadedNum.texture, TEXTURE_FILTER_BILINEAR);
+            gNumberFont = loadedNum;
+            gNumberFontLoaded = true;
+            TraceLog(LOG_INFO, "Loaded custom Number font '%s' (texture id=%d)", path, loadedNum.texture.id);
+        } else {
+            gNumberFont = GetFontDefault();
+            gNumberFontLoaded = false;
+            TraceLog(LOG_WARNING, "Failed to load Number font texture from '%s' - using default font", path);
+        }
+    } else {
+        gNumberFont = GetFontDefault();
+        gNumberFontLoaded = false;
+        TraceLog(LOG_WARNING, "Number font file missing; using default font");
+    }
 }
 
 void UnloadFontSafe() {
-
-    if (gCustomFontLoaded) {
-
-        UnloadFont(gFont);
-
+    if (gUIFontLoaded) {
+        TraceLog(LOG_INFO, "Unloading custom UI font");
+        UnloadFont(gUIFont);
+        gUIFontLoaded = false;
     }
+    if (gNumberFontLoaded) {
+        TraceLog(LOG_INFO, "Unloading custom Number font");
+        UnloadFont(gNumberFont);
+        gNumberFontLoaded = false;
+    }
+}
 
+float GetUIScale() {
+    return std::clamp(static_cast<float>(GetScreenWidth()) / 1400.0f, 1.0f, 1.35f);
 }
 
 void DrawUI(
@@ -60,46 +85,48 @@ void DrawUI(
 
     float size,
 
-    Color color
+    Color color,
+
+    bool numberFont
 
 ) {
 
+    const Font& font = numberFont ? gNumberFont : gUIFont;
     DrawTextEx(
-
-        gFont,
-
+        font,
         text.c_str(),
-
         pos,
-
         size,
-
         0.0f,
-
         color
-
     );
+}
 
+void DrawNumber(
+    const std::string& text,
+    Vector2 pos,
+    float size,
+    Color color
+) {
+    DrawUI(text, pos, size, color, true);
 }
 
 float TextWidth(
 
     const std::string& text,
 
-    float size
+    float size,
+
+    bool numberFont
 
 ) {
 
+    const Font& font = numberFont ? gNumberFont : gUIFont;
     return MeasureTextEx(
-
-        gFont,
-
+        font,
         text.c_str(),
-
         size,
-
         0.0f
-
     ).x;
 
 }
@@ -222,4 +249,20 @@ std::string FormatIntWithComma(int value) {
 
     return out;
 
+}
+
+std::string TrendName(TrendType trend) {
+    switch (trend) {
+        case TrendType::Bullish: return "Bullish";
+        case TrendType::Bearish: return "Bearish";
+        default: return "Neutral";
+    }
+}
+
+Color TrendColor(TrendType trend) {
+    switch (trend) {
+        case TrendType::Bullish: return Theme::UP_RED;
+        case TrendType::Bearish: return Theme::DOWN_GREEN;
+        default: return Theme::MUTED;
+    }
 }

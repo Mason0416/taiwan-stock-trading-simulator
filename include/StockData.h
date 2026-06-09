@@ -9,6 +9,12 @@ enum class TrendType {
     Bearish
 };
 
+enum class LimitStatus {
+    None,
+    LimitUp,
+    LimitDown
+};
+
 struct StockData {
     std::string name = "Aurora Tech";
     std::string ticker = "AUR";
@@ -29,4 +35,8 @@ struct StockData {
     TrendType trend = TrendType::Neutral;
 
     std::vector<double> history;
+
+    LimitStatus limitStatus = LimitStatus::None;
+
+    double noiseVolatility = 0.00012;
 };

@@ -2,8 +2,12 @@
 
 #include "raylib.h"
 #include "StockData.h"
+#include "Button.h"
 #include <string>
 #include <vector>
+
+extern Font gUIFont;
+extern Font gNumberFont;
 
 struct Theme {
     static constexpr Color BG = {7, 11, 18, 255};
@@ -20,6 +24,10 @@ struct Theme {
 
     static constexpr Color UP_RED = {210, 70, 85, 255};
     static constexpr Color DOWN_GREEN = {0, 180, 120, 255};
+    static constexpr Color LIMIT_UP_DARK = {124, 31, 42, 255};
+    static constexpr Color LIMIT_UP_HOVER = {218, 62, 78, 255};
+    static constexpr Color LIMIT_DOWN_DARK = {0, 105, 74, 255};
+    static constexpr Color LIMIT_DOWN_HOVER = {0, 190, 126, 255};
 
     static constexpr Color ACCENT_BLUE = {70, 100, 180, 255};
     static constexpr Color ACCENT_BLUE_HOVER = {90, 125, 210, 255};
@@ -29,66 +37,21 @@ struct Theme {
     static constexpr Color GRID = {48, 62, 80, 120};
 };
 
-class Button {
-public:
-    Button();
-
-    Button(
-        Rectangle rect,
-        std::string text,
-        Color base,
-        Color hover,
-        Color textColor
-    );
-
-    void SetActive(bool value);
-
-    void Update(float dt);
-
-    void Draw() const;
-
-    bool IsHovered() const;
-
-    bool IsClicked() const;
-
-    Rectangle GetBounds() const;
-
-private:
-    Rectangle bounds {0.0f, 0.0f, 0.0f, 0.0f};
-
-    std::string label;
-
-    Color baseColor;
-    Color hoverColor;
-    Color labelColor;
-
-    bool active = false;
-    float hoverT = 0.0f;
-};
-
-class StockDropdown {
-public:
-    StockDropdown();
-
-    explicit StockDropdown(Rectangle rect);
-
-    void Update();
-
-    void Draw() const;
-
-private:
-    Rectangle bounds {0.0f, 0.0f, 0.0f, 0.0f};
-
-    std::vector<std::string> options;
-
-    bool open = false;
-};
-
 void SetupFont();
 
 void UnloadFontSafe();
 
+float GetUIScale();
+
 void DrawUI(
+    const std::string& text,
+    Vector2 pos,
+    float size,
+    Color color,
+    bool numberFont = false
+);
+
+void DrawNumber(
     const std::string& text,
     Vector2 pos,
     float size,
@@ -97,7 +60,8 @@ void DrawUI(
 
 float TextWidth(
     const std::string& text,
-    float size
+    float size,
+    bool numberFont = false
 );
 
 Color LerpColor(

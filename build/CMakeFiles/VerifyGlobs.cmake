@@ -7,6 +7,7 @@ set(OLD_GLOB
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/Account.h"
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/Button.h"
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/GUI.h"
+  "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/NewsEvent.h"
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/StockData.h"
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/StockDropdown.h"
   "/Users/mason/OOP/inclass/assignment-5-Mason0416/include/TradingSystem.h"

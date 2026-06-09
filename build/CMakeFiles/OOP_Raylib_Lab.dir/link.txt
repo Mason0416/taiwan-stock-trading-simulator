@@ -1,1 +1,0 @@
-/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/OOP_Raylib_Lab.dir/src/main.cpp.o -o OOP_Raylib_Lab  libOOP_Raylib_Lab_lib.a -framework Cocoa _deps/raylib-build/raylib/libraylib.a -framework OpenGL -framework Cocoa -framework IOKit -framework CoreFoundation
